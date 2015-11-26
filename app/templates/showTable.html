@@ -2,14 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Overview</title>
+    <title>Overview for {{ tableName }}</title>
 
     <!-- DataTables CSS -->
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
-
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.1.0/css/buttons.dataTables.min.css">
 
 </head>
 <body>
+
+<h3>Overview for {{ tableName }}</h3>
+
+<a href="/show">Back to list of tables</a>
 
 <table id="tableTable" class="display compact cell-border" cellspacing="0" width="100%">
     <thead>
@@ -22,12 +26,19 @@
     <tbody>
     {% for item in data %}
         <tr>
-            {% for val in item%}
+            {% for val in item %}
             <td> {{ val }} </td>
             {% endfor %}
         </tr>
     {% endfor %}
     </tbody>
+    <tfoot>
+        <tr>
+        {% for c in colHeaders %}
+        <th> {{ c }} </th>
+        {% endfor %}
+        </tr>
+    </tfoot>
 </table>
 
 
@@ -35,13 +46,41 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/1.1.0/js/dataTables.select.min.js"></script>
 
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.1.0/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.colVis.min.js"></script>
+
 <script language="JavaScript">
 $(document).ready(function() {
+
+    $('#tableTable tfoot th').each( function () {
+        var title = $(this).text();
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    } );
+
     var table = $("#tableTable").DataTable({
         "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
         // see: https://datatables.net/examples/basic_init/dom.html
-        "dom": '<"top"Bif>rt<"bottom"flp><"clear">',
+        "dom": '<"top"Bilf>rt<"bottom"flp><"clear">',
+        buttons: [
+            'columnsToggle'
+        ]
     }); // end DataTable
+
+    // Apply the search
+    table.columns().every( function () {
+        var that = this;
+
+        $( 'input', this.footer() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that
+                    .search( this.value )
+                    .draw();
+            }
+        } );
+    } );
+
+    $("tfoot input").css( { "width" : "100%", "padding" : "3px", "box-sizing" : "border-box" } );
+
 });
 </script>
 
