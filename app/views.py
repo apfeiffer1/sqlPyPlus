@@ -5,7 +5,6 @@ from flask import render_template, redirect, url_for
 from sqlalchemy.engine import reflection
 from sqlalchemy import MetaData, Table
 from sqlalchemy.sql import text
-from .forms import InputDB
 
 from netrc import netrc
 
