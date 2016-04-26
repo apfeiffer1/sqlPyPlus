@@ -9,11 +9,15 @@ from .forms import InputDB
 
 from netrc import netrc
 
+from netrc import netrc
+
 @app.route('/')
 @app.route('/index')
 def index():
 
     return show()
+
+# =============================================================================
 
 @app.route('/show')
 def show():
@@ -27,7 +31,6 @@ def show():
     # print "got tablesnames:", tableNames
 
     return render_template( 'overview.html', tableNames = tableNames )
-
 
 @app.route('/showTable/<string:tableName>')
 def showTable(tableName):
@@ -47,4 +50,6 @@ def showTable(tableName):
     # print 'cols =', colHeaders
     # print 'data:', data
 
-    return render_template( 'showTable.html', tableName=tableName, colHeaders=colHeaders, data=data )
+    return render_template( 'showTable.html', 
+                            tableName=tableName, dbName=dbName,
+                            colHeaders=colHeaders, data=data )
