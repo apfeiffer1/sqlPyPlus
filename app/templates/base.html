@@ -7,12 +7,10 @@
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 
-<!--<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">-->
-
-<!--&lt;!&ndash; DataTables CSS &ndash;&gt;-->
-<!--<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">-->
-<!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.1.0/css/select.dataTables.min.css">-->
-<!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.1.0/css/buttons.dataTables.min.css">-->
+<!-- DataTables CSS  -->
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.1.0/css/select.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.1.0/css/buttons.dataTables.min.css">
 
 {% endblock %}
 
@@ -40,17 +38,13 @@
 {{ super() }}
 {{ moment.include_moment() }}
 
-<!--<script src="{{ url_for('static', filename='jquery.confirm.min.js') }}"></script>-->
+<!-- DataTables -->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/1.1.0/js/dataTables.select.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/fixedheader/3.1.0/js/dataTables.fixedHeader.min.js"></script>
 
-<!--&lt;!&ndash; jquery 1.11.3 already included in parent &ndash;&gt;-->
-
-<!--&lt;!&ndash; DataTables &ndash;&gt;-->
-<!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>-->
-<!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/select/1.1.0/js/dataTables.select.min.js"></script>-->
-<!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/fixedheader/3.1.0/js/dataTables.fixedHeader.min.js"></script>-->
-
+<!-- activate the ones below if you like to use these features -->
 <!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.1.0/js/dataTables.buttons.min.js"></script>-->
-<!--&lt;!&ndash;<script type="text/javascript" charset="utf8" src="https://nightly.datatables.net/buttons/js/buttons.html5.min.js"></script>&ndash;&gt;-->
 <!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.html5.min.js"></script>-->
 <!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.print.min.js"></script>-->
 <!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.flash.min.js"></script>-->

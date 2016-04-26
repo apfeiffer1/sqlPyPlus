@@ -1,6 +1,6 @@
 
-sqlPyPlus
-=========
+DbExplorer
+==========
 
 A generic database browser based on Flask, using SQLAlchemy's reflection/inspector mechanism.
 
@@ -23,7 +23,6 @@ Start the server via:
 
       python run.py
 
-and point your browser to http://localhost:5000 - you should see a list of all tables in your DB.
+and point your browser to http://localhost:5000 and start exploring your DB.
 
-Click on one to see the corresponding table ... ;)
 

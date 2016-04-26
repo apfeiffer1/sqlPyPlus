@@ -1,4 +1,3 @@
-
 from flask.ext.wtf import Form
 from wtforms import widgets, StringField, SelectMultipleField, SubmitField, IntegerField
 

@@ -1,17 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Overview for {{ tableName }}</title>
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block head %}
+{{ super() }}
 
     <!-- DataTables CSS -->
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.1.0/css/buttons.dataTables.min.css">
 
-</head>
-<body>
+{% endblock %}
 
-<h3>Overview for {{ tableName }}</h3>
+{% block title %} Overview for {{ tableName }} {% endblock %}
+
+{% block page_content %}
+
+<!DOCTYPE html>
+
+<h3>Overview for {{ tableName }} in {{ dbName }}</h3>
 
 <a href="/showDB/{{dbName}}">Back to list of tables for {{ dbName }}</a>
 
@@ -41,6 +46,10 @@
     </tfoot>
 </table>
 
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
 
 <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
@@ -65,11 +74,9 @@ $(document).ready(function() {
             'columnsToggle'
         ]
     }); // end DataTable
-
     // Apply the search
     table.columns().every( function () {
         var that = this;
-
         $( 'input', this.footer() ).on( 'keyup change', function () {
             if ( that.search() !== this.value ) {
                 that
@@ -78,11 +85,9 @@ $(document).ready(function() {
             }
         } );
     } );
-
     $("tfoot input").css( { "width" : "100%", "padding" : "3px", "box-sizing" : "border-box" } );
-
 });
 </script>
 
-</body>
-</html>
+
+{% endblock %}

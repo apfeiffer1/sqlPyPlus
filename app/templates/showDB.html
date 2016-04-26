@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block head %}
+{{ super() }}
+
+{% endblock %}
+
+{% block title %} Tables in {{ dbName }} {% endblock %}
+
+{% block page_content %}
+
+<h3>Tables in {{ dbName }}</h3>
+
+<a href="/">Back to list of databases</a>
+
+<br /><br />
+
+<ul>
+    {% for h in tableNames %}
+    <li> <a href="/showTable/{{ h }}"> {{ h }} </a> </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}

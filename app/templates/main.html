@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block head %}
+{{ super() }}
+
+{% endblock %}
+
+{% block title %} DB Explorer {% endblock %}
+
+{% block page_content %}
+
+{% if form %}
+    {{ wtf.quick_form(form) }}
+{% endif %}
+
+<h3>Available databases:</h3>
+<ul>
+    {% for h in dbNames %}
+    <li> <a href="/showDB/{{ h }}"> {{ h }} </a> </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}
