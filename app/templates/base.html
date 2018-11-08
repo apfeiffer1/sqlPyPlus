@@ -19,6 +19,15 @@
 
 {% block content %}
 <div class="container">
+    {% if errors %}
+    <div class="alert alert-danger">
+        {% for k, v in errors.items() %}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ k }} : {{ v }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
     {% for message in get_flashed_messages(category_filter=["error"]) %}
     <div class="alert alert-danger">
         <button type="button" class="close" data-dismiss="alert">&times;</button>

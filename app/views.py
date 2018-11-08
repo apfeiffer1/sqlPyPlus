@@ -3,24 +3,38 @@ import time
 from uuid import uuid4
 import re
 from urlparse import urlparse, urljoin
+from functools import wraps
 
-from flask import render_template, current_app, session
+from flask import render_template, current_app, session, redirect, url_for
 
 from sqlalchemy import inspect, create_engine
 from sqlalchemy.engine import reflection
 from sqlalchemy import MetaData, Table
 from sqlalchemy.sql import text
+from sqlalchemy.orm import exc as sa_exc
 
 from . import app
 from . import db
 
+
+def check_crashed(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print "==> crash detected, redirecting to index"
+            return redirect( url_for('index') )
+
+    return decorated_function
 # =============================================================================
 
 @app.route('/', methods=['GET'])
 def index():
 
     dbUrl = db.engine.url
-    print "got dbUrl:", dbUrl
+    # print "db at: ", dbUrl
+
     engine = create_engine(dbUrl)
     insp = reflection.Inspector.from_engine(engine)
 
@@ -31,11 +45,12 @@ def index():
     else:
         sysList = [u'information_schema', u'mysql', u'performance_schema', u'sys']
         dbList = [ x for x in insp.get_schema_names() if x not in sysList ]
-    print "dbList: ", dbList
+    # print "dbList: ", dbList
     
     return render_template( 'main.html', dbNames=dbList, form=None )
 
 @app.route('/showDB/<string:dbName>')
+@check_crashed
 def showDB(dbName):
 
     session['dbName'] = dbName
@@ -56,35 +71,45 @@ def showDB(dbName):
     return render_template( 'showDB.html', tableNames = tableNames, dbName=dbName )
 
 @app.route('/showFullTable/<string:tableName>')
+@check_crashed
 def showFullTable(tableName):
 
     return showTableContent(tableName, -1)
 
 @app.route( '/showTable/<string:tableName>' )
+@check_crashed
 def showTable( tableName ) :
 
     return showTableContent(tableName, 100)
 
+
 def showTableContent( tableName, nRows ):
 
-    print "session:", session
-    dbName = session.get('dbName')
+    info = {}
+    errors = {}
 
-    print 'dbName: ', dbName
+    info["session"] = session
+    dbName = session.get('dbName')
+    info['dbName'] = dbName
+
     dbUrl = str(db.engine.url)
-    print 'engine: ', dbUrl
+    info['engine'] = dbUrl
+
+    meta = MetaData()
+    selTable = Table('%s.%s' % (dbName,tableName), meta)
 
     # engine = create_engine( session.get('engine') )
     insp = reflection.Inspector.from_engine( db.engine )
 
-    meta = MetaData()
-    selTable = Table(tableName, meta)
+    # try:
+    #     insp.reflecttable(selTable, None)
+    # except Exception as e:
+    #     errors['NoSuchTableError'] = 'reflecttable> Table %s.%s not found or not accessible.' % (dbName, tableName, )
 
     if str(dbUrl).startswith('sqlite:'):
         colHeaders = [ x['name'] for x in insp.get_columns(table_name=tableName)]
     else:
         colHeaders = [ x['name'] for x in insp.get_columns(table_name=tableName, schema=dbName)]
-    insp.reflecttable(selTable, None)
 
     limitStr = ' '
     if nRows > 0:
@@ -93,17 +118,15 @@ def showTableContent( tableName, nRows ):
         sel = text( 'select * from %s%s' % (tableName, limitStr) )
     else:
         sel = text( 'select * from %s.%s%s' % (dbName, tableName, limitStr) )
-    print '++> ', sel
 
     data = db.session.execute( sel ).fetchall()
 
-    # print "table=", selTable
-    # print 'cols =', colHeaders
-    # print 'data:', data
-
-    return render_template( 'showTable.html', 
-                            tableName=tableName, dbName=dbName,
-                            colHeaders=colHeaders, data=data )
+    return render_template( 'showTable.html',
+                            tableName=tableName,
+                            dbName=dbName,
+                            colHeaders=colHeaders,
+                            data=data,
+                            info=info, errors=errors )
 
 @app.route('/showTableSchema/<string:tableName>')
 def showTableSchema(tableName):
