@@ -55,8 +55,17 @@ def showDB(dbName):
 
     return render_template( 'showDB.html', tableNames = tableNames, dbName=dbName )
 
-@app.route('/showTable/<string:tableName>')
-def showTable(tableName):
+@app.route('/showFullTable/<string:tableName>')
+def showFullTable(tableName):
+
+    return showTableContent(tableName, -1)
+
+@app.route( '/showTable/<string:tableName>' )
+def showTable( tableName ) :
+
+    return showTableContent(tableName, 100)
+
+def showTableContent( tableName, nRows ):
 
     print "session:", session
     dbName = session.get('dbName')
@@ -77,10 +86,15 @@ def showTable(tableName):
         colHeaders = [ x['name'] for x in insp.get_columns(table_name=tableName, schema=dbName)]
     insp.reflecttable(selTable, None)
 
+    limitStr = ' '
+    if nRows > 0:
+        limitStr = ' limit %d' % nRows
     if str(dbUrl).startswith('sqlite:'):
-        sel = text( 'select * from %s limit 100' % (tableName) )
+        sel = text( 'select * from %s%s' % (tableName, limitStr) )
     else:
-        sel = text( 'select * from %s.%s limit 100' % (dbName, tableName) )
+        sel = text( 'select * from %s.%s%s' % (dbName, tableName, limitStr) )
+    print '++> ', sel
+
     data = db.session.execute( sel ).fetchall()
 
     # print "table=", selTable
@@ -108,10 +122,7 @@ def showTableSchema(tableName):
         colInfo = insp.get_columns(table_name=tableName)
     else:
         colInfo = insp.get_columns(table_name=tableName, schema=dbName)
-
     # print insp.reflecttable(selTable, None)
-
-    data = insp.get_sorted_table_and_fkc_names(schema=dbName)
 
     return render_template( 'showTableSchema.html',
                             tableName=tableName, dbName=dbName,

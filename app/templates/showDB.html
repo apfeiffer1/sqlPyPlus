@@ -16,14 +16,75 @@
 
 <br /><br />
 
-<ul>
+<table id="tableTable" class="display compact cell-border" cellspacing="0" >
+    <thead>
+    <tr>
+        <th width="30%">Table Name</th>
+        <th width="20%">First 100 rows</th>
+        <th width="20%">All rows</th>
+        <th width="20%">Description/Schema</th>
+    </tr>
+    </thead>
+    <tbody>
     {% for h in tableNames %}
-    <li> <a href="/showTable/{{ h }}"> {{ h }} </a> --  <a href="/showTableSchema/{{ h }}"> (Schema) </a> </li>
+    <tr>
+        <td>
+            {{ h }}</a>
+        </td>
+        <td>
+            <a href="/showTable/{{ h }}"> first 100 rows </a>
+        </td>
+        <td>
+        <a href="/showFullTable/{{ h }}"> all data </a>
+        </td>
+        <td>
+        <a href="/showTableSchema/{{ h }}"> Description/Schema </a>
+        </td>
+    </tr>
     {% endfor %}
-</ul>
+    </tbody>
+    <tfoot>
+    <tr>
+        <th width="30%">Table Name</th>
+        <th width="20%">First 100 rows</th>
+        <th width="20%">All rows</th>
+        <th width="20%">Description/Schema</th>
+    </tr>
+    </tfoot>
+</table>
 
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
+<script language="JavaScript">
+$(document).ready(function() {
+
+    $('#tableTable tfoot th').each( function () {
+        var title = $(this).text();
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    } );
+
+    var table = $("#tableTable").DataTable({
+        "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+        // see: https://datatables.net/examples/basic_init/dom.html
+        "dom": '<"top"Bilf>rt<"bottom"flp><"clear">',
+        buttons: [
+            'columnsToggle'
+        ]
+    }); // end DataTable
+    // Apply the search
+    table.columns().every( function () {
+        var that = this;
+        $( 'input', this.footer() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that
+                    .search( this.value )
+                    .draw();
+            }
+        } );
+    } );
+    $("tfoot input").css( { "width" : "100%", "padding" : "3px", "box-sizing" : "border-box" } );
+});
+</script>
 {% endblock %}

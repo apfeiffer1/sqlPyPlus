@@ -20,8 +20,8 @@ bootstrap = Bootstrap()
 moment = Moment()
 db = SQLAlchemy( session_options={'autoflush':False, 'autocommit':False} )
 
-app = Flask(__name__)
-app.config.from_object('config')
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_pyfile( 'config.py' )
 
 bootstrap.init_app(app)
 moment.init_app(app)
