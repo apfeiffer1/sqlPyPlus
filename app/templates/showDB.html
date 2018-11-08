@@ -18,7 +18,7 @@
 
 <ul>
     {% for h in tableNames %}
-    <li> <a href="/showTable/{{ h }}"> {{ h }} </a> </li>
+    <li> <a href="/showTable/{{ h }}"> {{ h }} </a> --  <a href="/showTableSchema/{{ h }}"> (Schema) </a> </li>
     {% endfor %}
 </ul>
 

@@ -2,25 +2,14 @@ from datetime import datetime
 import time
 from uuid import uuid4
 import re
-
-from flask import render_template, redirect, url_for, abort, flash, request,\
-    current_app, make_response, session, g
-
 from urlparse import urlparse, urljoin
 
-from sqlalchemy.exc import IntegrityError
+from flask import render_template, current_app, session
 
 from sqlalchemy import inspect, create_engine
 from sqlalchemy.engine import reflection
 from sqlalchemy import MetaData, Table
 from sqlalchemy.sql import text
-
-from netrc import netrc
-
-from netrc import netrc
-
-from flask.ext.login import login_required, current_user
-from flask.ext.sqlalchemy import get_debug_queries
 
 from . import app
 from . import db
@@ -64,9 +53,6 @@ def showDB(dbName):
     else:
         tableNames = [ x for x in insp.get_table_names(schema=dbName) if x not in ignoreList]
 
-    print "tableNames:", tableNames
-    print "session:", session
-
     return render_template( 'showDB.html', tableNames = tableNames, dbName=dbName )
 
 @app.route('/showTable/<string:tableName>')
@@ -104,3 +90,29 @@ def showTable(tableName):
     return render_template( 'showTable.html', 
                             tableName=tableName, dbName=dbName,
                             colHeaders=colHeaders, data=data )
+
+@app.route('/showTableSchema/<string:tableName>')
+def showTableSchema(tableName):
+
+    dbName = session.get('dbName')
+
+    dbUrl = str(db.engine.url)
+    insp = reflection.Inspector.from_engine( db.engine )
+
+    meta = MetaData()
+    selTable = Table(tableName, meta)
+
+    print "insp: ", insp.default_schema_name, insp.bind, insp.dialect, insp.engine
+
+    if str(dbUrl).startswith('sqlite:'):
+        colInfo = insp.get_columns(table_name=tableName)
+    else:
+        colInfo = insp.get_columns(table_name=tableName, schema=dbName)
+
+    # print insp.reflecttable(selTable, None)
+
+    data = insp.get_sorted_table_and_fkc_names(schema=dbName)
+
+    return render_template( 'showTableSchema.html',
+                            tableName=tableName, dbName=dbName,
+                            colInfo=colInfo )
