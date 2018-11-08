@@ -40,7 +40,7 @@ def index():
         current_app.isSqlite = True
         dbList = [ str(dbUrl).split('/')[-1] ]
     else:
-        # sysList = [u'information_schema', u'mysql', u'performance_schema', u'sys']    
+        sysList = [u'information_schema', u'mysql', u'performance_schema', u'sys']
         dbList = [ x for x in insp.get_schema_names() if x not in sysList ]
     print "dbList: ", dbList
     
@@ -92,9 +92,9 @@ def showTable(tableName):
     insp.reflecttable(selTable, None)
 
     if str(dbUrl).startswith('sqlite:'):
-        sel = text( 'select * from %s' % (tableName) )
+        sel = text( 'select * from %s limit 100' % (tableName) )
     else:
-        sel = text( 'select * from %s.%s' % (dbName, tableName) )
+        sel = text( 'select * from %s.%s limit 100' % (dbName, tableName) )
     data = db.session.execute( sel ).fetchall()
 
     # print "table=", selTable
